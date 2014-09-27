@@ -348,37 +348,31 @@ table.dataTable thead .sorting:after {
     margin-bottom: 0;
     padding-top: 50px;
 }
-
-#footer{
-	
+#footer{	
 }
 .navbar-brand{
 	font-size: 22px;
 	background: url(images/wblm_logo.png) no-repeat left center;
 	padding-left: 85px;
 }
-
 .navbar-brand span{
 	font-size: 12px;
 }
-
 .page-header{
 	width: 500px;
 	float: left;
 	margin-top: 20px;
 	border-bottom: 0;
 }
-
-
 #screen-meta-links{
 	display: none;
 }
-
 .wblm_tables .search-box{
 	margin-top: -22px !important;
 }
-
 .wblm-table-add-field{
-min-width: 345px;
-	
+min-width: 345px;	
+}
+.toplevel_page_wblm-dashboard .dashicons-admin-generic:before {
+    content: "\f103";
 }

@@ -3,7 +3,7 @@
 Plugin Name: Broken Link Manager
 Plugin URI: http://www.k78.de
 Description: WBLM -> Wordpress Broken Link Manager. This plugin helps you check, organise and monitor your broken backlinks.
-Version: 0.2.6
+Version: 0.2.7
 Author: Hüseyin Kocak
 Author URI: http://www.k-78.de
 Text Domain: broken-link-manager
@@ -25,11 +25,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 if(!defined('WBLM_VERSION')) {
-	define( 'WBLM_VERSION', '0.2.6' );
+	define( 'WBLM_VERSION', '0.2.7' );
 }
 define( 'WP_DEBUG', true );
 define('SCRIPT_DEBUG', true);
-define('WP_DEBUG_DISPLAY', true);
+define('WP_DEBUG_DISPLAY', false);
 define('WP_DEBUG_LOG', true);
 
 if(!defined('WBLM_PLUGIN_PATH')) {
@@ -54,6 +54,12 @@ if(!defined('TABLE_WBLM')) {
 if(!defined('TABLE_WBLM_LOG')) {
 	define( 'TABLE_WBLM_LOG', $wpdb->prefix . 'wblm_log' );
 }
+if(get_option('wblm_mysql_ver')){
+	define( 'MYSQL_VER', get_option('wblm_mysql_ver'));
+}else{
+	add_option( 'wblm_mysql_ver', '2', '', 'yes' );
+	define( 'MYSQL_VER', get_option('wblm_mysql_ver'));
+}
 $settingsSaveFunc = $_GET['settingsSave'];
 $editURLFunc = $_GET['editURL'];
 $addURLFunc = $_GET['addURL'];
@@ -62,7 +68,7 @@ include WBLM_CONFIG_PATH . 'functions.php';
 //add_action('wp_head', 'add_ob_start');
 //add_action('wp_footer', 'flush_ob_end');
 if ('wblm.php' == basename($_SERVER['SCRIPT_FILENAME']))
-	die ('Bu dosyayı doğrudan erişim yok!');
+	die ('No direct access to this file!');
 
 register_activation_hook(__FILE__,'wblm_admin_actions');
 
@@ -133,8 +139,8 @@ function menuLogFunc(){
 	`useragent` VARCHAR( 250 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
 	`ip` VARCHAR( 250 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
 	`redirect` TINYINT NOT NULL,
-	`broken` TINYINT NOT NULL
-	`http_statu` INT NOT NULL ;
+	`broken` TINYINT NOT NULL,
+	`http_statu` INT NOT NULL
 	) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci ";
 	$wpdb->query($sql_wblm_log);
 /*************************************************************************************
@@ -158,7 +164,7 @@ if(!defined('WBLM_LOG_URL')) {
 if(get_option('wblm_send_email')){
 	define( 'SEND_EMAIL', get_option('wblm_send_email'));
 }else{
-	add_option( 'wblm_send_email', 'on', '', 'yes' );
+	add_option( 'wblm_send_email', '', '', 'yes' );
 	define( 'SEND_EMAIL', get_option('wblm_send_email'));
 }
 if(get_option('wblm_save_broken_urls')){
@@ -238,15 +244,18 @@ $url_check = $wpdb->get_row("SELECT * FROM " . TABLE_WBLM . "  WHERE old_url = '
 $urlID = $url_check->id;
 
 if($url_check->old_url){
-
-if(SAVE_URL_STATS){
-$urlHit = $url_check->hit + 1;
-$wpdb->query("UPDATE " . TABLE_WBLM . " SET `hit` = '$urlHit' WHERE id = '$urlID'");
-}
+	if(SAVE_URL_STATS){
+	$urlHit = $url_check->hit + 1;
+	$wpdb->query("UPDATE " . TABLE_WBLM . " SET `hit` = '$urlHit' WHERE id = '$urlID'");
+	}
 	if($url_check->new_url){
 		$redirectedUrl = $url_check->new_url;
 	}else{
 		$redirectedUrl = 0;
+		if(SAVE_URL_LOG){
+			if(REDIRECT_DEFAULT_URL){$http_statu = 301;}else{$http_statu = 404;}
+			$wpdb->query("INSERT INTO " . TABLE_WBLM_LOG . " (`url`, `date`, `referer`, `useragent`, `ip`, `broken`, `http_statu`) VALUES ('$urlID', '$current_time', '$referer', '$useragent', '$ip', '1', '$http_statu')");			
+		}//SAVE_URL_LOG
 	}
 }else{
 	$redirectedUrl = 0;
@@ -256,7 +265,7 @@ $wpdb->query("UPDATE " . TABLE_WBLM . " SET `hit` = '$urlHit' WHERE id = '$urlID
 				if(REDIRECT_DEFAULT_URL){$http_statu = 301;}else{$http_statu = 404;}
 				$newUrl = $wpdb->get_row("SELECT id FROM " . TABLE_WBLM . " where `old_url` = '$brokenUrl'");
 				$newUrlID = $newUrl->id;
-				$wpdb->query("INSERT INTO " . TABLE_WBLM_LOG . " (`url`, `date`, `referer`, `useragent`, `ip`, `broken`, `http_statu`) VALUES ('$newUrlID', '$current_time', '$referer', '$useragent', '$ip', '1', '$http_statu')");
+				$wpdb->query("INSERT INTO " . TABLE_WBLM_LOG . " (`url`, `date`, `referer`, `useragent`, `ip`, `broken`, `http_statu`) VALUES ('$newUrlID', '$current_time', '$referer', '$useragent', '$ip', '1', '$http_statu')");			
 			}//SAVE_URL_LOG
 		}//SAVE_BROKEN_URLS
 	}
@@ -283,8 +292,8 @@ $wpdb->query("UPDATE " . TABLE_WBLM . " SET `hit` = '$urlHit' WHERE id = '$urlID
 	}
 		if(REDIRECT_DEFAULT_URL){
 		//No URL --> Redirected Default URL
-		wp_redirect(DEFAULT_URL, 301 );
-		exit;
+		//wp_redirect(DEFAULT_URL, 301 );
+		//exit;
 		}
 	}
   }
