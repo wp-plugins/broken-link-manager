@@ -46,7 +46,7 @@ if($type == 'old'){
 	$page = $_POST['rpage'];
 }else{
 	$wpdb->query("UPDATE " . TABLE_WBLM . " SET old_url = '$old_url', new_url = '$new_url' WHERE id = $url");
-	$page = 'wblm-redirect';
+	$page = 'page=wblm-redirect';
 }
 
 _e('Updated ', 'wblm');

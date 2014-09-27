@@ -1,6 +1,8 @@
 <?php
 global $WblmListTable;
-$WblmListTable->prepare_items($_GET['url'],$_GET['s']);
+$s  = isset($_REQUEST['s']) ? $_REQUEST['s'] : null;
+$url  = isset($_REQUEST['url']) ? $_REQUEST['url'] : null;
+$WblmListTable->prepare_items($url,$s);
 ?>
 <div id="wrapper" class="wblm_tables">
 	<!-- Navigation -->
@@ -27,7 +29,7 @@ $WblmListTable->prepare_items($_GET['url'],$_GET['s']);
 						<?php _e('LOG', 'wblm') ?>
 						<form method="get">
 					    <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
-					    <input type="hidden" name="url" value="<?php echo $_REQUEST['url'] ?>" />
+					    <input type="hidden" name="url" value="<?php echo $url; ?>" />
 					    <?php $WblmListTable->search_box( 'search', 'search_id' ); ?>
 						</form>
 					</div>

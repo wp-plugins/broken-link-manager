@@ -3,7 +3,7 @@
 Plugin Name: Broken Link Manager
 Plugin URI: http://www.k78.de
 Description: WBLM -> Wordpress Broken Link Manager. This plugin helps you check, organise and monitor your broken backlinks.
-Version: 0.2.7
+Version: 0.2.8
 Author: Hüseyin Kocak
 Author URI: http://www.k-78.de
 Text Domain: broken-link-manager
@@ -25,13 +25,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 if(!defined('WBLM_VERSION')) {
-	define( 'WBLM_VERSION', '0.2.7' );
+	define( 'WBLM_VERSION', '0.2.8' );
 }
-define( 'WP_DEBUG', true );
-define('SCRIPT_DEBUG', true);
-define('WP_DEBUG_DISPLAY', false);
-define('WP_DEBUG_LOG', true);
-
 if(!defined('WBLM_PLUGIN_PATH')) {
 	define( 'WBLM_PLUGIN_PATH', trailingslashit( dirname( __FILE__ ) ) );
 }
@@ -60,18 +55,13 @@ if(get_option('wblm_mysql_ver')){
 	add_option( 'wblm_mysql_ver', '2', '', 'yes' );
 	define( 'MYSQL_VER', get_option('wblm_mysql_ver'));
 }
-$settingsSaveFunc = $_GET['settingsSave'];
-$editURLFunc = $_GET['editURL'];
-$addURLFunc = $_GET['addURL'];
-$delURLFunc = $_GET['delURL'];
+
+$settingsSaveFunc  = isset($_GET['settingsSave']) ? $_GET['settingsSave'] : null;
+$editURLFunc  = isset($_GET['editURL']) ? $_GET['editURL'] : null;
+$addURLFunc  = isset($_GET['addURL']) ? $_GET['addURL'] : null;
+$delURLFunc  = isset($_GET['delURL']) ? $_GET['delURL'] : null;
+
 include WBLM_CONFIG_PATH . 'functions.php';
-//add_action('wp_head', 'add_ob_start');
-//add_action('wp_footer', 'flush_ob_end');
-if ('wblm.php' == basename($_SERVER['SCRIPT_FILENAME']))
-	die ('No direct access to this file!');
-
-register_activation_hook(__FILE__,'wblm_admin_actions');
-
 add_action('init', 'wblm_textdomain');
 function wblm_textdomain() {
    if (function_exists('load_plugin_textdomain')) {
@@ -292,8 +282,8 @@ if($url_check->old_url){
 	}
 		if(REDIRECT_DEFAULT_URL){
 		//No URL --> Redirected Default URL
-		//wp_redirect(DEFAULT_URL, 301 );
-		//exit;
+		wp_redirect(DEFAULT_URL, 301 );
+		exit;
 		}
 	}
   }
@@ -366,4 +356,3 @@ require_once( WBLM_CONFIG_PATH . 'class/log_url.php');
   $WblmListTable = new wblm_List_Table();
 }
 add_action("admin_menu", "createBaclinksMenu");
-

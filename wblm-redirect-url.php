@@ -1,6 +1,7 @@
 <?php
 global $WblmListTable;
-$WblmListTable->prepare_items($_GET['s']);
+$s  = isset($_REQUEST['s']) ? $_REQUEST['s'] : null;
+$WblmListTable->prepare_items($s);
 ?>
 <div id="wrapper" class="wblm_tables">
 	<!-- Navigation -->

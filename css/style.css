@@ -373,6 +373,6 @@ table.dataTable thead .sorting:after {
 .wblm-table-add-field{
 min-width: 345px;	
 }
-.toplevel_page_wblm-dashboard .dashicons-admin-generic:before {
+.toplevel_page_wblm-dashboard .dashicons-admin-generic {
     content: "\f103";
 }

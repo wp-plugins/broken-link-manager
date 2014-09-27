@@ -15,7 +15,6 @@ $referUrls = $wpdb->get_var("SELECT COUNT(referer) FROM " . TABLE_WBLM_LOG );
             </div>
             <!-- /.navbar-header -->
         </nav>
-
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
@@ -171,6 +170,5 @@ $referUrls = $wpdb->get_var("SELECT COUNT(referer) FROM " . TABLE_WBLM_LOG );
         </div>
         <!-- /#page-wrapper -->
         <?php include WBLM_CONFIG_PATH . 'footer.php'; ?>
-
 </div>
 <!-- /#wrapper -->

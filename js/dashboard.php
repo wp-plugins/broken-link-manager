@@ -1,8 +1,6 @@
 <?php
-   //Let's set the header straight
    header('Content-type: text/javascript');
 
-   //Get the WP-specifics, so that we can use constants and what not
    $home_dir = preg_replace('^wp-content/plugins/[a-z0-9\-/]+^', '', getcwd());
    include($home_dir . 'wp-load.php');
    global $wpdb;
@@ -29,7 +27,6 @@ if ($logstats) {
    }
 }
 
-
 echo "], \n
         xkey: 'period',
         ykeys: ['total', 'redirect', 'broken'],
@@ -40,21 +37,17 @@ echo "], \n
         lineColors: ['#428bca','#5cb85c','#d9534f']
     }); \n \n";
 
-
-
-
 $redirectUrlsCount = $wpdb->get_var("SELECT COUNT(id) FROM " . TABLE_WBLM . " where `active` = '1'" );
 $brokenlinkCount = $wpdb->get_var("SELECT COUNT(id) FROM " . TABLE_WBLM . " where `active` = '0'" );
-
 
 echo "Morris.Donut({
         element: 'morris-donut-chart',
         data: [{
-            label: 'Redirect (301)',
-            value: $redirectUrlsCount
-        }, {
             label: 'Broken (404)',
             value: $brokenlinkCount
+        }, {
+            label: 'Redirected (301)',
+            value: $redirectUrlsCount
         }],
         resize: true
     });
