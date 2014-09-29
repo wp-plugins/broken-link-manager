@@ -161,9 +161,12 @@ $order = (isset($_REQUEST['order']) && in_array($_REQUEST['order'], array('asc',
 
 
 if($search){    
-$search = trim($search);
-$searchFilterUrl = "and (`referer` LIKE '%%$search%%' OR `useragent` LIKE '%%$search%%' OR `ip` LIKE '%%$search%%')";
-$searchFilterAll = "where `referer` LIKE '%%$search%%' OR `useragent` LIKE '%%$search%%' OR `ip` LIKE '%%$search%%'";
+	$search = trim($search);
+	$searchFilterUrl = "and (`referer` LIKE '%%$search%%' OR `useragent` LIKE '%%$search%%' OR `ip` LIKE '%%$search%%')";
+	$searchFilterAll = "where `referer` LIKE '%%$search%%' OR `useragent` LIKE '%%$search%%' OR `ip` LIKE '%%$search%%'";
+}else{
+	$searchFilterUrl = null;
+	$searchFilterAll = null;
 }
 
 if($url){

@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Broken Link Manager
-Plugin URI: http://www.k78.de
+Plugin URI: https://wordpress.org/plugins/broken-link-manager
 Description: WBLM -> Wordpress Broken Link Manager. This plugin helps you check, organise and monitor your broken backlinks.
-Version: 0.2.8
+Version: 0.2.9
 Author: Hüseyin Kocak
-Author URI: http://www.k-78.de
+Author URI: http://k-78.de
 Text Domain: broken-link-manager
 
 WordPress Broken Link Manager Plugin
@@ -25,7 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 if(!defined('WBLM_VERSION')) {
-	define( 'WBLM_VERSION', '0.2.8' );
+	define( 'WBLM_VERSION', '0.2.9' );
 }
 if(!defined('WBLM_PLUGIN_PATH')) {
 	define( 'WBLM_PLUGIN_PATH', trailingslashit( dirname( __FILE__ ) ) );
@@ -137,14 +137,11 @@ function menuLogFunc(){
  *	LOG KLASORU (SIMDILIK SADECE KLASOR OLUSTURULUYOR)
  *************************************************************************************/
 	$log_dir = WBLM_PLUGIN_PATH.'/log';
-	//echo '$wblm_dir :' . $wblm_dir;
 	if (!file_exists($log_dir)) { 
 	$golustur = mkdir($log_dir, 0777);
 	chmod($log_dir, 0777);
-	}else { 
-	//echo $log_dir . " folder already"; 
+	}else {  
 	}
-	
 if(!defined('WBLM_LOG_URL')) {
 	define( 'WBLM_LOG_URL', WBLM_PLUGIN_URL.'/log' );
 }
@@ -202,7 +199,7 @@ if(get_option('wblm_bcc_email')){
 if(get_option('wblm_redirect_default_url')){
 	define( 'REDIRECT_DEFAULT_URL', get_option('wblm_redirect_default_url'));
 }else{
-	add_option( 'wblm_redirect_default_url', 'on', '', 'yes' );
+	add_option( 'wblm_redirect_default_url', '', '', 'yes' );
 	define( 'REDIRECT_DEFAULT_URL', get_option('wblm_redirect_default_url'));
 }
 if(get_option('wblm_default_url')){
@@ -227,7 +224,7 @@ $useragent = $_SERVER['HTTP_USER_AGENT'];
 $ip =  $_SERVER['REMOTE_ADDR'];
 $admin_email = get_option('admin_email');
 
-if($_SERVER[HTTPS] == 'on'){$https = 's';}
+$https  = isset($_SERVER[HTTPS]) ? $_SERVER[HTTPS] : null;
 $brokenUrl = 'http' . $https . '://' . $_SERVER[HTTP_HOST] . $_SERVER[REQUEST_URI];
 
 $url_check = $wpdb->get_row("SELECT * FROM " . TABLE_WBLM . "  WHERE old_url = '$brokenUrl' limit 1");
@@ -289,13 +286,13 @@ if($url_check->old_url){
   }
 }
 function createBaclinksMenu() {
-    $menu_wblm_dashboard = add_menu_page("Backlinks", "Backlinks", 0, "wblm-dashboard", "menuDashboardFunc");
-    $menu_wblm_redirecturl = add_submenu_page("wblm-dashboard", "Redirected URLs", "Redirected URLs", 0, "wblm-redirect", "menuRedirectUrlFunc");
-    $menu_wblm_brokenurl = add_submenu_page("wblm-dashboard", "Broken URLs", "Broken URLs", 0, "wblm-broken", "menuBrokenUrlFunc");
-    $menu_wblm_log = add_submenu_page("wblm-dashboard", "URLs Log", "URLs Log", 0, "wblm-log", "menuLogFunc");
-    $menu_wblm_addurl = add_submenu_page("wblm-dashboard", "Add URL", "Add URL", 0, "wblm-add-url", "menuAddUrlFunc");    
-    $menu_wblm_settings = add_submenu_page("wblm-dashboard", "Settings", "Settings", 0, "wblm-settings", "menuSettingsFunc");    
-    $menu_wblm_editurl = add_submenu_page("wblm-settings", "Edit URL", "Edit URL", 0, "wblm-edit-url", "menuEditUrlFunc");
+    $menu_wblm_dashboard = add_menu_page("Backlinks", "Backlinks", 'manage_options', "wblm-dashboard", "menuDashboardFunc");
+    $menu_wblm_redirecturl = add_submenu_page("wblm-dashboard", "Redirected URLs", "Redirected URLs", 'manage_options', "wblm-redirect", "menuRedirectUrlFunc");
+    $menu_wblm_brokenurl = add_submenu_page("wblm-dashboard", "Broken URLs", "Broken URLs", 'manage_options', "wblm-broken", "menuBrokenUrlFunc");
+    $menu_wblm_log = add_submenu_page("wblm-dashboard", "URLs Log", "URLs Log", 'manage_options', "wblm-log", "menuLogFunc");
+    $menu_wblm_addurl = add_submenu_page("wblm-dashboard", "Add URL", "Add URL", 'manage_options', "wblm-add-url", "menuAddUrlFunc");    
+    $menu_wblm_settings = add_submenu_page("wblm-dashboard", "Settings", "Settings", 'manage_options', "wblm-settings", "menuSettingsFunc");    
+    $menu_wblm_editurl = add_submenu_page("wblm-settings", "Edit URL", "Edit URL", 'manage_options', "wblm-edit-url", "menuEditUrlFunc");
     add_action( 'admin_print_styles-' . $menu_wblm_dashboard, 'add_standart_stylesheet' );
     add_action( 'admin_print_styles-' . $menu_wblm_dashboard, 'add_dashboard_stylesheet' );
 	add_action( 'admin_print_styles-' . $menu_wblm_redirecturl, 'add_standart_stylesheet' );	

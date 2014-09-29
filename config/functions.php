@@ -33,14 +33,12 @@ window.location="'. admin_url("admin.php?page=wblm-settings"). '";
 </script>';
 }
 
-
 function wpslEditURL(){
-$old_url = $_POST['old_url'];
-$new_url = $_POST['new_url'];
-$url = $_POST['url'];
-$type = $_POST['type'];
+$old_url  = isset($_POST['old_url']) ? $_POST['old_url'] : null;
+$new_url  = isset($_POST['new_url']) ? $_POST['new_url'] : null;
+$url  = isset($_POST['url']) ? $_POST['url'] : null;
+$type  = isset($_POST['type']) ? $_POST['type'] : null;
 global $wpdb;
-
 if($type == 'old'){
 	$wpdb->query("UPDATE " . TABLE_WBLM . " SET `new_url` = '$new_url', `active` = '1' WHERE id = '$url'");
 	$page = $_POST['rpage'];
@@ -57,13 +55,12 @@ window.location="'. admin_url("admin.php?$page"). '";
 }
 
 function wpslAddURL(){
-$old_url = $_POST['old_url'];
-$new_url = $_POST['new_url'];
+$old_url  = isset($_POST['old_url']) ? $_POST['old_url'] : null;
+$new_url  = isset($_POST['new_url']) ? $_POST['new_url'] : null;
 
 global $wpdb;
 $wpdb->query("INSERT INTO " . TABLE_WBLM . " (`old_url`, `new_url`, `hit`, `active`) VALUES ('$old_url', '$new_url', '0', '1')");
 $page = 'wblm-redirect';
-
 
 _e('added ', 'wblm');
 
@@ -72,10 +69,9 @@ window.location="'. admin_url("admin.php?page=$page") . '";
 </script>';
 }
 
-
 function wpslDelURL(){
-$url = $_GET['url'];
-$page = $_GET['page'];
+$url  = isset($_GET['url']) ? $_GET['url'] : null;
+$page  = isset($_GET['page']) ? $_GET['page'] : null;
 
 global $wpdb;
 $wpdb->query("DELETE FROM " . TABLE_WBLM . " WHERE id = $url");
@@ -96,7 +92,6 @@ function wpslLogStatu($redirect, $broken){
 	}
 	echo $statu;
 }
-
 
 if($settingsSaveFunc){ wpslSettingsSave(); }
 if($editURLFunc){ wpslEditURL(); }

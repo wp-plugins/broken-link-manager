@@ -5,22 +5,18 @@ if( ! class_exists( 'WP_List_Table' ) ) {
 
 class wblm_List_Table extends WP_List_Table {
 
-var $url_data = array();        
-        
+var $url_data = array();      
     function __construct(){
     global $status, $page, $wpdb;
-
         parent::__construct( array(
             'singular'  => __( 'url', 'wblm' ),     //singular name of the listed records
             'plural'    => __( 'urls', 'wblm' ),   //plural name of the listed records
             'ajax'      => false        //does this table support ajax?
-
     ) );
     add_action( 'admin_head', array( &$this, 'admin_header' ) );            
+}
 
-    }
-
-  function admin_header() {
+function admin_header() {
     $page = ( isset($_GET['page'] ) ) ? esc_attr( $_GET['page'] ) : false;
     if( 'wblm-redirect' != $page )
     return;
@@ -30,15 +26,15 @@ var $url_data = array();
     echo '.wp-list-table .column-new_url { width: auto; }';
     echo '.wp-list-table .column-hit { width: 70px;}';
     echo '</style>';
-  }
+}
 
-  function no_items() {
-    _e( 'No urls found, dude.' );
-  }
+function no_items() {
+   _e( 'No urls found, dude.' );
+}
 
-  function column_default( $item, $column_name ) {
-    switch( $column_name ) { 
-    	case 'id':
+function column_default( $item, $column_name ) {
+	switch( $column_name ) { 
+		case 'id':
         case 'old_url':
         case 'new_url':
         case 'hit':
@@ -46,7 +42,7 @@ var $url_data = array();
         default:
             return print_r( $item, true ) ; //Show the whole array for troubleshooting purposes
     }
-  }
+}
 
 function get_sortable_columns() {
   $sortable_columns = array(
@@ -59,14 +55,14 @@ function get_sortable_columns() {
 }
 
 function get_columns(){
-        $columns = array(
-            'cb'        => '<input type="checkbox" />',
-            'old_url' => __( 'Broken URLs', 'wblm' ),
-            'new_url'    => __( 'Redirected URLs', 'wblm' ),
-            'hit'      => __( 'HIT', 'wblm' )
-        );
-         return $columns;
-    }
+	$columns = array(
+		'cb'        => '<input type="checkbox" />',
+		'old_url' => __( 'Broken URLs', 'wblm' ),
+		'new_url'    => __( 'Redirected URLs', 'wblm' ),
+		'hit'      => __( 'HIT', 'wblm' )
+	);
+	return $columns;
+}
 
 function usort_reorder( $a, $b ) {
   // If no sort, default to title
@@ -85,9 +81,7 @@ function column_old_url($item){
 		  'delete'    => sprintf('<a href="'. admin_url("admin.php?page=%s&delURL=%s&url=%s") .'" onClick="return confirm(\'Are you sure you want to delete?\');">Delete</a>',$_REQUEST['page'],'on',$item['id']),
 		  'log'    => sprintf('<a href="'. admin_url("admin.php?page=%s&url=%s") .'">Log</a>','wblm-log',$item['id']), 
 		  'Waybackmachine'    => sprintf('<a href="http://web.archive.org/web/*/%s" target="_blank">Waybackmachine</a>',$item['old_url']), 
-
-        );
-
+	);
   return sprintf('%1$s %2$s', $item['old_url'], $this->row_actions($actions) );
 }
 
@@ -99,9 +93,7 @@ function get_bulk_actions() {
 }
 
 function column_cb($item) {
-        return sprintf(
-            '<input type="checkbox" name="url[]" value="%s" />', $item['ID']
-        );    
+	return sprintf('<input type="checkbox" name="url[]" value="%s" />', $item['id']);    
 }
 
 function prepare_items($search=''){
@@ -121,12 +113,11 @@ $order = (isset($_REQUEST['order']) && in_array($_REQUEST['order'], array('asc',
 
 if($search){    
 $search = trim($search);
-    
 	$total_items = $wpdb->get_var("SELECT COUNT(id) FROM $table_name where `active` = '1' and old_url like '%$search%'");      
 	$this->items = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name WHERE `active` = '1' and (`old_url` LIKE '%%%s%%' OR `new_url` LIKE '%%%s%%') ", $search, $search), ARRAY_A);     
 }else{
-	$total_items = $wpdb->get_var("SELECT COUNT(id) FROM $table_name where `active` = '1' $search_filter");
-	$this->items = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name where `active` = '1' $search_filter ORDER BY $orderby $order LIMIT %d OFFSET %d", $per_page, $paged), ARRAY_A);
+	$total_items = $wpdb->get_var("SELECT COUNT(id) FROM $table_name where `active` = '1' ");
+	$this->items = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name where `active` = '1' ORDER BY $orderby $order LIMIT %d OFFSET %d", $per_page, $paged), ARRAY_A);
 }
 
 $this->set_pagination_args(array(

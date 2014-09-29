@@ -58,14 +58,14 @@ function get_sortable_columns() {
 }
 
 function get_columns(){
-        $columns = array(
-            'cb'        => '<input type="checkbox" />',
-            'old_url' => __( 'Broken URLs', 'wblm' ),
-            'new_url' => __( 'Add Redirect Link', 'wblm' ),
-            'hit'      => __( 'HIT', 'wblm' )
-        );
-         return $columns;
-    }
+	$columns = array(
+		'cb'        => '<input type="checkbox" />',
+		'old_url' => __( 'Broken URLs', 'wblm' ),
+		'new_url' => __( 'Add Redirect Link', 'wblm' ),
+		'hit'      => __( 'HIT', 'wblm' )
+	);
+	return $columns;
+}
 
 function usort_reorder( $a, $b ) {
   // If no sort, default to title
@@ -79,21 +79,21 @@ function usort_reorder( $a, $b ) {
 }
 
 
-function inline_editor($visible_columns) {
-return '
-<form method="post" action="admin.php?page=wblm-broken&amp;editURL=on">
-<input type="hidden" value="%s" name="url">
-<input type="hidden" value="old" name="type">
-<input type="hidden" value="%s" name="rpage">
-	<div class="blc-inline-editor-content">
-		<label>
-			<span class="title">URL</span>
-			<span><input type="text" placeholder="http://" name="new_url" value="" class="wblm-table-add-field" /></span>
-		</label>
-		<input type="submit" class="button-primary save alignright" value="Add" />
-	<div class="clear"></div>
-	</div>
-</form>';
+function inline_editor() {
+	return '
+	<form method="post" action="admin.php?page=wblm-broken&amp;editURL=on">
+	<input type="hidden" value="%s" name="url">
+	<input type="hidden" value="old" name="type">
+	<input type="hidden" value="%s" name="rpage">
+		<div class="blc-inline-editor-content">
+			<label>
+				<span class="title">URL</span>
+				<span><input type="text" placeholder="http://" name="new_url" value="" class="wblm-table-add-field" /></span>
+			</label>
+			<input type="submit" class="button-primary save alignright" value="Add" />
+		<div class="clear"></div>
+		</div>
+	</form>';
 }
 
 function column_old_url($item){
@@ -107,9 +107,13 @@ return sprintf('%1$s %2$s', $item['old_url'], $this->row_actions($actions) );
 }
 
 function column_new_url($item){
-	$rpage = 'page='.$_GET['page'].'&orderby='.$_GET['orderby'].'&order='.$_GET['order'].'&paged='.$_GET['paged'].'&s='.$_GET['s'];
+	$rpage = isset($_GET['page']) ? 'page=' . $_GET['page'] : 'page=wblm-broken';
+	$rpage .= isset($_GET['orderby']) ? '&orderby=' . $_GET['orderby'] : null;
+	$rpage .= isset($_GET['order']) ? '&order=' . $_GET['order'] : null;
+	$rpage .= isset($_GET['paged']) ? '&paged=' . $_GET['paged'] : null;
+	$rpage .= isset($_GET['s']) ? '&s=' . $_GET['s'] : null;
 	$actions = array(
-		'add_url'    => sprintf($this->inline_editor($visible_columns) ,$item['id'],$rpage),
+		'add_url'    => sprintf($this->inline_editor() ,$item['id'],$rpage),
 	);
 	return sprintf('%1$s %2$s', $item['new_url'], $this->row_actions($actions) );
 }
@@ -141,8 +145,7 @@ $paged = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged']) - 1) : 0;
 $orderby = (isset($_REQUEST['orderby']) && in_array($_REQUEST['orderby'], array_keys($this->get_sortable_columns()))) ? $_REQUEST['orderby'] : 'hit';
 $order = (isset($_REQUEST['order']) && in_array($_REQUEST['order'], array('asc', 'desc'))) ? $_REQUEST['order'] : 'desc';
 
-if($search){    
-// Trim Search Term
+if($search){
 	$search = trim($search);        
 	$total_items = $wpdb->get_var("SELECT COUNT(id) FROM $table_name where `active` = '0' and old_url like '%$search%'");
 	$this->items = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name WHERE `active` = '0' and `old_url` LIKE '%%%s%%' ORDER BY $orderby $order LIMIT %d OFFSET %d", $search, $per_page, $paged), ARRAY_A);     
@@ -150,7 +153,6 @@ if($search){
 	$total_items = $wpdb->get_var("SELECT COUNT(id) FROM $table_name where `active` = '0' ");
 	$this->items = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name where `active` = '0' ORDER BY $orderby $order LIMIT %d OFFSET %d", $per_page, $paged), ARRAY_A);
 }
-
  
 $this->set_pagination_args(array(
 'total_items' => $total_items,
