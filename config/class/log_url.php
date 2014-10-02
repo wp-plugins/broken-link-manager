@@ -139,10 +139,21 @@ function get_bulk_actions() {
 }
 
 function column_cb($item) {
-        return sprintf(
-            '<input type="checkbox" name="url[]" value="%s" />', $item['id']
-        );    
+	return sprintf('<input type="checkbox" name="log[]" value="%s" />', $item['id']);    
 }
+
+
+function process_bulk_action() {
+	$url = null;           
+	if( 'delete'===$this->current_action() ) {
+		foreach($_POST['log'] as $log) {
+			global $wpdb;	
+			$wpdb->query("DELETE FROM " . TABLE_WBLM_LOG . " WHERE id = $log");
+		}
+	}
+}
+
+
 
 function prepare_items($url='',$search=''){
 global $wpdb;
@@ -154,6 +165,7 @@ $hidden = array();
 $sortable = $this->get_sortable_columns();
  
 $this->_column_headers = array($columns, $hidden, $sortable);
+$this->process_bulk_action(); 
 
 $paged = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged']) - 1) : 0;
 $orderby = (isset($_REQUEST['orderby']) && in_array($_REQUEST['orderby'], array_keys($this->get_sortable_columns()))) ? $_REQUEST['orderby'] : 'id';

@@ -87,7 +87,8 @@ function column_old_url($item){
 
 function get_bulk_actions() {
   $actions = array(
-    'delete'    => 'Delete'
+    'delete'    => 'Delete URL (URLs and URLs LOG)',
+    'deleteLog'    => 'Delete only URL LOG'
   );
   return $actions;
 }
@@ -95,6 +96,23 @@ function get_bulk_actions() {
 function column_cb($item) {
 	return sprintf('<input type="checkbox" name="url[]" value="%s" />', $item['id']);    
 }
+
+function process_bulk_action() {
+	$url = null;           
+	if( 'delete'===$this->current_action() ) {
+		foreach($_POST['url'] as $url) {
+			global $wpdb;	
+			$wpdb->query("DELETE FROM " . TABLE_WBLM . " WHERE id = $url");
+			$wpdb->query("DELETE FROM " . TABLE_WBLM_LOG . " WHERE url = $url");
+		}
+	}elseif( 'deleteLog'===$this->current_action() ) {
+		foreach($_POST['url'] as $url) {
+			global $wpdb;	
+			$wpdb->query("DELETE FROM " . TABLE_WBLM_LOG . " WHERE url = $url");
+		}
+	}        
+}
+
 
 function prepare_items($search=''){
 global $wpdb;
@@ -106,6 +124,7 @@ $hidden = array();
 $sortable = $this->get_sortable_columns();
  
 $this->_column_headers = array($columns, $hidden, $sortable);
+$this->process_bulk_action(); 
  
 $paged = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged']) - 1) : 0;
 $orderby = (isset($_REQUEST['orderby']) && in_array($_REQUEST['orderby'], array_keys($this->get_sortable_columns()))) ? $_REQUEST['orderby'] : 'hit';

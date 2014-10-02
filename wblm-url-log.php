@@ -17,7 +17,7 @@ $WblmListTable->prepare_items($url,$s);
 		<div class="row">
 			<div class="col-lg-12">
 				<h3 class="page-header">LOG</h3>
-				<?php include WBLM_CONFIG_PATH . 'topnavi.php'; ?>
+				<?php get_wblmTopNavi(); ?>
 			</div>
 			<!-- /.col-lg-12 -->
 		</div>            
@@ -36,7 +36,9 @@ $WblmListTable->prepare_items($url,$s);
 					<!-- /.panel-heading -->
 					<div class="panel-body">
 						<div class="table-responsive">
-						<?php $WblmListTable->display(); ?> 
+						<form action="<?php echo admin_url('admin.php?page=wblm-log'); ?>" id="wpse-list-table-form" method="post">
+						<?php $WblmListTable->display(); ?>
+						</form>
 						</div>
 						<!-- /.table-responsive -->
 					</div>
@@ -48,5 +50,5 @@ $WblmListTable->prepare_items($url,$s);
 		</div>            
 	</div>
 	<!-- /#page-wrapper -->
-	<?php include WBLM_CONFIG_PATH . 'footer.php'; ?>
+	<?php get_wblmFooter(); ?>
 </div>

@@ -3,7 +3,7 @@
 Plugin Name: Broken Link Manager
 Plugin URI: https://wordpress.org/plugins/broken-link-manager
 Description: WBLM -> Wordpress Broken Link Manager. This plugin helps you check, organise and monitor your broken backlinks.
-Version: 0.2.9
+Version: 0.3.0
 Author: Hüseyin Kocak
 Author URI: http://k-78.de
 Text Domain: broken-link-manager
@@ -24,11 +24,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-if(!defined('WBLM_VERSION')) {
-	define( 'WBLM_VERSION', '0.2.9' );
+if ( ! function_exists( 'get_plugins' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/plugin.php';
 }
+$get_wblm = get_plugin_data(__FILE__);
 if(!defined('WBLM_PLUGIN_PATH')) {
 	define( 'WBLM_PLUGIN_PATH', trailingslashit( dirname( __FILE__ ) ) );
+}
+if(!defined('WBLM_VERSION')) {
+	define( 'WBLM_VERSION', $get_wblm['Version'] );
 }
 if(!defined('WBLM_CONFIG_PATH')) {
 	define( 'WBLM_CONFIG_PATH', WBLM_PLUGIN_PATH . 'config/' );
@@ -40,7 +44,10 @@ if(!defined('WBLM_DIRNAME')) {
 	define( 'WBLM_DIRNAME', dirname( plugin_basename( __FILE__ ) ) );
 }
 if(!defined('WBLM_NAME')) {
-	define( 'WBLM_NAME', 'BROKEN LINK MANAGER' );
+	define( 'WBLM_NAME', strtoupper($get_wblm['Name']) );
+}
+if(!defined('WBLM_ICON')) {
+	define( 'WBLM_ICON', $get_wblm['AuthorURI'].'/wblm/icon.png?ver='.WBLM_VERSION );
 }
 global $wpdb;
 if(!defined('TABLE_WBLM')) {
@@ -83,9 +90,6 @@ function add_dashboard_script() {
     wp_enqueue_script( 'wblm-raphael', plugins_url( '/js/plugins/morris/raphael.min.js', __FILE__ ), array('jquery', 'wblm-bootstrap'), null, true );
     wp_enqueue_script( 'wblm-morris', plugins_url( '/js/plugins/morris/morris.min.js', __FILE__ ), array('jquery', 'wblm-bootstrap', 'wblm-raphael'), null, true );
     wp_enqueue_script( 'wblm-dashboard-data', plugins_url( '/js/dashboard.php', __FILE__ ), array('jquery', 'wblm-bootstrap', 'wblm-raphael', 'wblm-morris'), null, true );
-}
-function wblm_menu(){
-    include 'wblm-admin.php';
 }
 function menuDashboardFunc(){
     include 'wblm-dashboard.php';
@@ -134,7 +138,7 @@ function menuLogFunc(){
 	) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci ";
 	$wpdb->query($sql_wblm_log);
 /*************************************************************************************
- *	LOG KLASORU (SIMDILIK SADECE KLASOR OLUSTURULUYOR)
+ *	LOG PATH (SIMDILIK SADECE KLASOR OLUSTURULUYOR)
  *************************************************************************************/
 	$log_dir = WBLM_PLUGIN_PATH.'/log';
 	if (!file_exists($log_dir)) { 
@@ -216,46 +220,43 @@ function _custom_redirect(){
   global $wp_query;
   global $wpdb;
   if ( $wp_query->is_404() ){
-$current_time = current_time( 'mysql' );
+	$referer  = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'Direct';
+	$useragent  = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
+	$ip  = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null;
+	$current_time = current_time('mysql');
+	$https  = isset($_SERVER['HTTPS']) ? $_SERVER['HTTPS'] : null;
+	$brokenUrl = 'http' . $https . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
-$referer = $_SERVER['HTTP_REFERER'];
-if (!$referer){$referer = 'Direct';}
-$useragent = $_SERVER['HTTP_USER_AGENT'];
-$ip =  $_SERVER['REMOTE_ADDR'];
-$admin_email = get_option('admin_email');
+	$url_check = $wpdb->get_row("SELECT * FROM " . TABLE_WBLM . "  WHERE old_url = '$brokenUrl' limit 1");	
+	$urlID  = isset($url_check->id) ? $url_check->id : null;
 
-$https  = isset($_SERVER[HTTPS]) ? $_SERVER[HTTPS] : null;
-$brokenUrl = 'http' . $https . '://' . $_SERVER[HTTP_HOST] . $_SERVER[REQUEST_URI];
-
-$url_check = $wpdb->get_row("SELECT * FROM " . TABLE_WBLM . "  WHERE old_url = '$brokenUrl' limit 1");
-$urlID = $url_check->id;
-
-if($url_check->old_url){
-	if(SAVE_URL_STATS){
-	$urlHit = $url_check->hit + 1;
-	$wpdb->query("UPDATE " . TABLE_WBLM . " SET `hit` = '$urlHit' WHERE id = '$urlID'");
-	}
-	if($url_check->new_url){
-		$redirectedUrl = $url_check->new_url;
-	}else{
-		$redirectedUrl = 0;
-		if(SAVE_URL_LOG){
-			if(REDIRECT_DEFAULT_URL){$http_statu = 301;}else{$http_statu = 404;}
-			$wpdb->query("INSERT INTO " . TABLE_WBLM_LOG . " (`url`, `date`, `referer`, `useragent`, `ip`, `broken`, `http_statu`) VALUES ('$urlID', '$current_time', '$referer', '$useragent', '$ip', '1', '$http_statu')");			
-		}//SAVE_URL_LOG
-	}
-}else{
-	$redirectedUrl = 0;
-	if(SAVE_BROKEN_URLS){
-		$wpdb->query("INSERT INTO " . TABLE_WBLM . " (`old_url`, `hit`) VALUES ('$brokenUrl', '1')");
+	if($urlID){
+		if(SAVE_URL_STATS){
+		$urlHit = $url_check->hit + 1;
+		$wpdb->query("UPDATE " . TABLE_WBLM . " SET `hit` = '$urlHit' WHERE id = '$urlID'");
+		}
+		if($url_check->new_url){
+			$redirectedUrl = $url_check->new_url;
+		}else{
+			$redirectedUrl = 0;
 			if(SAVE_URL_LOG){
 				if(REDIRECT_DEFAULT_URL){$http_statu = 301;}else{$http_statu = 404;}
-				$newUrl = $wpdb->get_row("SELECT id FROM " . TABLE_WBLM . " where `old_url` = '$brokenUrl'");
-				$newUrlID = $newUrl->id;
-				$wpdb->query("INSERT INTO " . TABLE_WBLM_LOG . " (`url`, `date`, `referer`, `useragent`, `ip`, `broken`, `http_statu`) VALUES ('$newUrlID', '$current_time', '$referer', '$useragent', '$ip', '1', '$http_statu')");			
+				$wpdb->query("INSERT INTO " . TABLE_WBLM_LOG . " (`url`, `date`, `referer`, `useragent`, `ip`, `broken`, `http_statu`) VALUES ('$urlID', '$current_time', '$referer', '$useragent', '$ip', '1', '$http_statu')");			
 			}//SAVE_URL_LOG
-		}//SAVE_BROKEN_URLS
+		}
+	}else{
+		$redirectedUrl = 0;
+		if(SAVE_BROKEN_URLS){
+			$wpdb->query("INSERT INTO " . TABLE_WBLM . " (`old_url`, `hit`) VALUES ('$brokenUrl', '1')");
+				if(SAVE_URL_LOG){
+					if(REDIRECT_DEFAULT_URL){$http_statu = 301;}else{$http_statu = 404;}
+					$newUrl = $wpdb->get_row("SELECT id FROM " . TABLE_WBLM . " where `old_url` = '$brokenUrl'");
+					$newUrlID = $newUrl->id;
+					$wpdb->query("INSERT INTO " . TABLE_WBLM_LOG . " (`url`, `date`, `referer`, `useragent`, `ip`, `broken`, `http_statu`) VALUES ('$newUrlID', '$current_time', '$referer', '$useragent', '$ip', '1', '$http_statu')");			
+				}//SAVE_URL_LOG
+			}//SAVE_BROKEN_URLS
 	}
+	
 	if ($redirectedUrl){
 		if(SAVE_URL_LOG){
 			$wpdb->query("INSERT INTO " . TABLE_WBLM_LOG . " (`url`, `date`, `referer`, `useragent`, `ip`, `redirect`, `http_statu`) VALUES ('$urlID', '$current_time', '$referer', '$useragent', '$ip', '1', '301')");
@@ -286,7 +287,7 @@ if($url_check->old_url){
   }
 }
 function createBaclinksMenu() {
-    $menu_wblm_dashboard = add_menu_page("Backlinks", "Backlinks", 'manage_options', "wblm-dashboard", "menuDashboardFunc");
+    $menu_wblm_dashboard = add_menu_page("Backlinks", "Backlinks", 'manage_options', "wblm-dashboard", "menuDashboardFunc", WBLM_ICON);
     $menu_wblm_redirecturl = add_submenu_page("wblm-dashboard", "Redirected URLs", "Redirected URLs", 'manage_options', "wblm-redirect", "menuRedirectUrlFunc");
     $menu_wblm_brokenurl = add_submenu_page("wblm-dashboard", "Broken URLs", "Broken URLs", 'manage_options', "wblm-broken", "menuBrokenUrlFunc");
     $menu_wblm_log = add_submenu_page("wblm-dashboard", "URLs Log", "URLs Log", 'manage_options', "wblm-log", "menuLogFunc");

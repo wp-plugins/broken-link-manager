@@ -6,22 +6,17 @@
                 <?php echo WBLM_NAME; ?> <span> Ver <?php echo WBLM_VERSION; ?></span>
                 </a>
             </div>
-            <!-- /.navbar-header -->
         </nav>
 
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
                    <h3 class="page-header"><?php _e('Settings', 'wblm') ?></h3>
-                   <?php include WBLM_CONFIG_PATH . 'topnavi.php'; ?>
+                   <?php get_wblmTopNavi(); ?>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>            
-            <!-- /.row -->
-            
             <form class="form-horizontal" role="form" action="admin.php?page=wblm-settings&settingsSave=on" method="post">
-            
-            
             <!-- General Settings -->
             <div class="row">
                 <div class="col-lg-12">
@@ -213,6 +208,6 @@
                    
         </div>
         <!-- /#page-wrapper -->
-		<?php include WBLM_CONFIG_PATH . 'footer.php'; ?>
+		<?php get_wblmFooter(); ?>
 </div>
 <!-- /#wrapper -->

@@ -81,19 +81,14 @@ function usort_reorder( $a, $b ) {
 
 function inline_editor() {
 	return '
-	<form method="post" action="admin.php?page=wblm-broken&amp;editURL=on">
-	<input type="hidden" value="%s" name="url">
-	<input type="hidden" value="old" name="type">
-	<input type="hidden" value="%s" name="rpage">
 		<div class="blc-inline-editor-content">
 			<label>
 				<span class="title">URL</span>
-				<span><input type="text" placeholder="http://" name="new_url" value="" class="wblm-table-add-field" /></span>
+				<span><input type="text" placeholder="http://" name="new_url%s" value="" class="wblm-table-add-field" /></span>
 			</label>
-			<input type="submit" class="button-primary save alignright" value="Add" />
+			<button type="submit" class="button-primary save alignright" name="urlAdd" value="%s">Add</button>
 		<div class="clear"></div>
-		</div>
-	</form>';
+		</div>';
 }
 
 function column_old_url($item){
@@ -107,20 +102,17 @@ return sprintf('%1$s %2$s', $item['old_url'], $this->row_actions($actions) );
 }
 
 function column_new_url($item){
-	$rpage = isset($_GET['page']) ? 'page=' . $_GET['page'] : 'page=wblm-broken';
-	$rpage .= isset($_GET['orderby']) ? '&orderby=' . $_GET['orderby'] : null;
-	$rpage .= isset($_GET['order']) ? '&order=' . $_GET['order'] : null;
-	$rpage .= isset($_GET['paged']) ? '&paged=' . $_GET['paged'] : null;
-	$rpage .= isset($_GET['s']) ? '&s=' . $_GET['s'] : null;
 	$actions = array(
-		'add_url'    => sprintf($this->inline_editor() ,$item['id'],$rpage),
+		'add_url'    => sprintf($this->inline_editor() ,$item['id'],$item['id']),
 	);
 	return sprintf('%1$s %2$s', $item['new_url'], $this->row_actions($actions) );
 }
 
+
 function get_bulk_actions() {
   $actions = array(
-    'delete'    => 'Delete'
+    'delete'    => 'Delete URL (URLs and URLs LOG)',
+    'deleteLog'    => 'Delete only URL LOG'
   );
   return $actions;
 }
@@ -128,7 +120,34 @@ function get_bulk_actions() {
 function column_cb($item) {
 	return sprintf('<input type="checkbox" name="url[]" value="%s" />', $item['id']);    
 }
-    
+
+function process_bulk_action() {
+	$url = null;           
+	if( 'delete'===$this->current_action() ) {
+		foreach($_POST['url'] as $url) {
+			global $wpdb;	
+			$wpdb->query("DELETE FROM " . TABLE_WBLM . " WHERE id = $url");
+			$wpdb->query("DELETE FROM " . TABLE_WBLM_LOG . " WHERE url = $url");
+		}
+	}elseif( 'deleteLog'===$this->current_action() ) {
+		foreach($_POST['url'] as $url) {
+			global $wpdb;	
+			$wpdb->query("DELETE FROM " . TABLE_WBLM_LOG . " WHERE url = $url");
+		}
+	}
+	
+	$urlAdd  = isset($_REQUEST['urlAdd']) ? $_REQUEST['urlAdd'] : null;
+	if($urlAdd){
+		global $wpdb;
+		$new_url  = isset($_REQUEST['new_url'.$urlAdd]) ? $_REQUEST['new_url'.$urlAdd] : null;
+		$wpdb->query("UPDATE " . TABLE_WBLM . " SET `new_url` = '$new_url', `active` = '1' WHERE id = '$urlAdd'");
+	}
+	
+	
+	
+	
+}
+
 
 function prepare_items($search=''){
 global $wpdb;
@@ -140,6 +159,7 @@ $hidden = array();
 $sortable = $this->get_sortable_columns();
  
 $this->_column_headers = array($columns, $hidden, $sortable);
+$this->process_bulk_action(); 
 
 $paged = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged']) - 1) : 0;
 $orderby = (isset($_REQUEST['orderby']) && in_array($_REQUEST['orderby'], array_keys($this->get_sortable_columns()))) ? $_REQUEST['orderby'] : 'hit';

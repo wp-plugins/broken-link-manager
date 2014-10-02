@@ -10,8 +10,7 @@
 	</nav>
 	<div id="page-wrapper">
 		<div class="row">
-			<div class="col-lg-12"><h3 class="page-header"><?php _e('Add URL', 'wblm') ?></h3><?php include WBLM_CONFIG_PATH . 'topnavi.php'; ?></div>
-			<!-- /.col-lg-12 -->
+			<div class="col-lg-12"><h3 class="page-header"><?php _e('Add URL', 'wblm') ?></h3><?php get_wblmTopNavi(); ?></div>
 		</div>            
 		<!-- /.row -->
 		<form class="form-horizontal" role="form" action="admin.php?page=wblm-redirect&addURL=on" method="post">                     
@@ -51,6 +50,6 @@
 	</form>              
 	</div>
 	<!-- /#page-wrapper -->
-	<?php include WBLM_CONFIG_PATH . 'footer.php'; ?>
+	<?php get_wblmFooter(); ?>
 </div>
 <!-- /#wrapper -->

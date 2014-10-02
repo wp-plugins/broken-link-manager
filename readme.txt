@@ -3,7 +3,7 @@ Contributors: K78
 Tags: Broken, Link, URL,  301, 404, Backlink, checker, SEO, Google, 404 page, Borken url, wordpress 404, Redirect
 Requires at least: 3.0
 Tested up to: 4.0
-Stable tag: 0.2.9
+Stable tag: 0.3.0
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8NYR3F4RVTBHS
 
 This plugin helps you check, organize and monitor your broken backlink.
@@ -15,7 +15,7 @@ Wordpress Broken Link Manager continuously detects broken backlinks to your webs
 You can either direct all your broken links to a default page or connect them to any page individually.
 
 > <strong>SEO Friendly</strong><br>
-> Method 301, as recommended by Google, is used in the routing process. Thus, you will not suffer from loss by broken links in terms of SEO.
+> Method 301, as recommended by Google, is used in the routing process. Thus, you will not suffer from loss by broken links in terms of SEO.<br>
 > [Click here for more information about 301 redirect](https://support.google.com/webmasters/answer/93633?hl=en) 
 
 
@@ -39,6 +39,13 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 
 
 == Changelog ==
+
+= 0.3.0 =
+* wp_debug_log warnings were organized.
+* Added Bulk delete feature
+* Added Bulk delete feature for LOG
+* Added menu icon
+* Beta version now ended
 
 = 0.2.9 BETA =
 * When the first activation, the default redirect URL is passive.

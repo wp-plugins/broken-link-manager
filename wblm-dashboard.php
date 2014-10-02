@@ -19,9 +19,8 @@ $referUrls = $wpdb->get_var("SELECT COUNT(referer) FROM " . TABLE_WBLM_LOG );
             <div class="row">
                 <div class="col-lg-12">
                 <h1 class="page-header"><?php _e('Dashboard', 'wblm') ?></h1>
-                <?php include WBLM_CONFIG_PATH . 'topnavi.php'; ?>
+                <?php get_wblmTopNavi(); ?>
                 </div>
-                <!-- /.col-lg-12 -->
             </div>            
             <!-- /.row -->
             <div class="row">
@@ -169,6 +168,6 @@ $referUrls = $wpdb->get_var("SELECT COUNT(referer) FROM " . TABLE_WBLM_LOG );
             <!-- /.row -->
         </div>
         <!-- /#page-wrapper -->
-        <?php include WBLM_CONFIG_PATH . 'footer.php'; ?>
+        <?php get_wblmFooter(); ?>
 </div>
 <!-- /#wrapper -->

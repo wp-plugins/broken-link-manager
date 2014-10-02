@@ -16,7 +16,8 @@ $urlInfo = $wpdb->get_row("SELECT * FROM " . TABLE_WBLM . " where id = $url");
 	<div id="page-wrapper">
 		<div class="row">
 			<div class="col-lg-12">
-				<h3 class="page-header"><?php _e('Edit URL', 'wblm') ?></h3><?php include WBLM_CONFIG_PATH . 'topnavi.php'; ?>
+				<h3 class="page-header"><?php _e('Edit URL', 'wblm') ?></h3>
+				<?php get_wblmTopNavi(); ?>
 			</div>
 			<!-- /.col-lg-12 -->
 		</div>            
@@ -61,6 +62,6 @@ $urlInfo = $wpdb->get_row("SELECT * FROM " . TABLE_WBLM . " where id = $url");
 	</form>
 	</div>
 	<!-- /#page-wrapper -->
-	<?php include WBLM_CONFIG_PATH . 'footer.php'; ?>
+	<?php get_wblmFooter(); ?>
 </div>
 <!-- /#wrapper -->
