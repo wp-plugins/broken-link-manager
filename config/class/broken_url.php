@@ -92,13 +92,16 @@ function inline_editor() {
 }
 
 function column_old_url($item){
-$actions = array(
-		  'delete'    => sprintf('<a href="'. admin_url("admin.php?page=%s&delURL=%s&url=%s") .'" onClick="return confirm(\'Are you sure you want to delete?\');">Delete</a>',$_REQUEST['page'],'on',$item['id']),
-		  'log'    => sprintf('<a href="'. admin_url("admin.php?page=%s&url=%s") .'">Log</a>','wblm-log',$item['id']), 
-		  'Waybackmachine'    => sprintf('<a href="http://web.archive.org/web/*/%s" target="_blank">Waybackmachine</a>',$item['old_url']),
+	$datum = parse_url($item['old_url']);
+	$parts = pathinfo($datum['path']);
+	$ext  = isset($parts['extension']) ? $parts['extension'] : 'page';
+	$actions = array(
+		'type' => sprintf('<b>%s</b>',$ext), 
+		'delete'    => sprintf('<a href="'. admin_url("admin.php?page=%s&delURL=%s&url=%s") .'" onClick="return confirm(\'Are you sure you want to delete?\');">Delete</a>',$_REQUEST['page'],'on',$item['id']),
+		'log'    => sprintf('<a href="'. admin_url("admin.php?page=%s&url=%s") .'">Log</a>','wblm-log',$item['id']), 
+		'Waybackmachine'    => sprintf('<a href="http://web.archive.org/web/*/%s" target="_blank">Waybackmachine</a>',$item['old_url']),
 );
-
-return sprintf('%1$s %2$s', $item['old_url'], $this->row_actions($actions) );
+	return sprintf('%1$s %2$s', $item['old_url'], $this->row_actions($actions) );
 }
 
 function column_new_url($item){

@@ -76,13 +76,17 @@ function usort_reorder( $a, $b ) {
 }
 
 function column_old_url($item){
-  $actions = array(
-          'edit'    => sprintf('<a href="'. admin_url("admin.php?page=%s&url=%s") .'">Edit</a>','wblm-edit-url',$item['id']),  
-		  'delete'    => sprintf('<a href="'. admin_url("admin.php?page=%s&delURL=%s&url=%s") .'" onClick="return confirm(\'Are you sure you want to delete?\');">Delete</a>',$_REQUEST['page'],'on',$item['id']),
-		  'log'    => sprintf('<a href="'. admin_url("admin.php?page=%s&url=%s") .'">Log</a>','wblm-log',$item['id']), 
-		  'Waybackmachine'    => sprintf('<a href="http://web.archive.org/web/*/%s" target="_blank">Waybackmachine</a>',$item['old_url']), 
+	$datum = parse_url($item['old_url']);
+	$parts = pathinfo($datum['path']);
+	$ext  = isset($parts['extension']) ? $parts['extension'] : 'page';
+	$actions = array(
+	  	'type' => sprintf('<b>%s</b>',$ext), 
+	  	'edit'    => sprintf('<a href="'. admin_url("admin.php?page=%s&url=%s") .'">Edit</a>','wblm-edit-url',$item['id']),  
+		'delete'    => sprintf('<a href="'. admin_url("admin.php?page=%s&delURL=%s&url=%s") .'" onClick="return confirm(\'Are you sure you want to delete?\');">Delete</a>',$_REQUEST['page'],'on',$item['id']),
+		'log'    => sprintf('<a href="'. admin_url("admin.php?page=%s&url=%s") .'">Log</a>','wblm-log',$item['id']), 
+		'Waybackmachine'    => sprintf('<a href="http://web.archive.org/web/*/%s" target="_blank">Waybackmachine</a>',$item['old_url']), 
 	);
-  return sprintf('%1$s %2$s', $item['old_url'], $this->row_actions($actions) );
+	return sprintf('%1$s %2$s', $item['old_url'], $this->row_actions($actions) );
 }
 
 function get_bulk_actions() {
@@ -107,7 +111,7 @@ function process_bulk_action() {
 		}
 	}elseif( 'deleteLog'===$this->current_action() ) {
 		foreach($_POST['url'] as $url) {
-			global $wpdb;	
+			global $wpdb;
 			$wpdb->query("DELETE FROM " . TABLE_WBLM_LOG . " WHERE url = $url");
 		}
 	}        
