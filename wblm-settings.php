@@ -204,7 +204,37 @@
 </div>
                
 </form>
-    <br /><br />      
+
+
+<br /><br />
+<!-- Empty -->
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">     
+			<!-- /.panel-heading -->
+			<div class="panel-body">                      
+				<p class="bg-danger" style="padding:10px; margin-top:0; font-size:16px; font-weight: bold; "><?php _e('Empty', 'wblm') ?></p>
+				<div class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-2">
+							<a onclick="return confirm('Are you sure you want to empty all log?');" href="<?php echo admin_url("admin.php?page=wblm-settings&emptyLOG=on"); ?>">
+								<button type="submit" class="btn btn-danger"> <?php _e('EMPTY ALL LOG', 'wblm') ?> </button>
+							</a>
+						</div>
+						<div class="col-sm-2">
+							<a onclick="return confirm('Are you sure you want to empty all broken URLs?');" href="<?php echo admin_url("admin.php?page=wblm-settings&emptyBrokenUrls=on"); ?>">
+								<button type="submit" class="btn btn-warning"> <?php _e('EMPTY ALL BROKEN URLs', 'wblm') ?> </button>
+							</a>
+						</div>
+					</div>
+				</div><!-- form-horizontal -->
+			</div><!-- /.panel-body -->
+		</div><!-- /.panel -->
+	</div><!-- /.col-lg-12 -->
+</div> <!-- //Empty -->
+
+
+<br /><br />      
                    
         </div>
         <!-- /#page-wrapper -->

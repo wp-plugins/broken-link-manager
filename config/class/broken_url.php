@@ -115,7 +115,8 @@ function column_new_url($item){
 function get_bulk_actions() {
   $actions = array(
     'delete'    => 'Delete URL (URLs and URLs LOG)',
-    'deleteLog'    => 'Delete only URL LOG'
+    'deleteLog'    => 'Delete only URL LOG',
+    'bulkEdit'    => 'Bulk Edit'
   );
   return $actions;
 }
@@ -137,6 +138,8 @@ function process_bulk_action() {
 			global $wpdb;	
 			$wpdb->query("DELETE FROM " . TABLE_WBLM_LOG . " WHERE url = $url");
 		}
+	}elseif( 'bulkEdit'===$this->current_action() ) {
+				get_bulkEdit('wblm-broken', 'Add');
 	}
 	
 	$urlAdd  = isset($_REQUEST['urlAdd']) ? $_REQUEST['urlAdd'] : null;
@@ -146,6 +149,14 @@ function process_bulk_action() {
 		$wpdb->query("UPDATE " . TABLE_WBLM . " SET `new_url` = '$new_url', `active` = '1' WHERE id = '$urlAdd'");
 	}
 	
+	$urlAddBulk  = isset($_REQUEST['urlAddBulk']) ? $_REQUEST['urlAddBulk'] : null;
+	if($urlAddBulk){
+		global $wpdb;
+		$new_url  = isset($_REQUEST['new_url']) ? $_REQUEST['new_url'] : null;
+		foreach($_POST['urls'] as $url) {
+			$wpdb->query("UPDATE " . TABLE_WBLM . " SET `new_url` = '$new_url', `active` = '1' WHERE id = '$url'");
+		}
+	}
 	
 	
 	
@@ -156,7 +167,7 @@ function prepare_items($search=''){
 global $wpdb;
  
 $table_name = $wpdb->prefix . 'wblm';
-$per_page = 20;
+$per_page = 50;
 $columns = $this->get_columns();
 $hidden = array();
 $sortable = $this->get_sortable_columns();

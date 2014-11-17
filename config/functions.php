@@ -121,10 +121,41 @@ function get_wblmTopNavi(){
 	printf($topNavi, admin_url("admin.php?page=wblm-dashboard"), admin_url("admin.php?page=wblm-redirect"), admin_url("admin.php?page=wblm-broken"), admin_url("admin.php?page=wblm-add-url"), admin_url("admin.php?page=wblm-log"), admin_url("admin.php?page=wblm-settings"));
 }
 
+function get_bulkEdit($page, $buttonText){
+	$bulkEdit =  '
+	<div class="alert alert-info alert-dismissable" id="bulkEditBox">
+		<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+		<form action="admin.php?page=%s" method="post">';     
+		foreach($_POST['url'] as $url) {
+			$bulkEdit .= '<input type="hidden" name="urls[]" value="'.$url.'" />';
+		}
+		$bulkEdit .= '<label>
+				<span class="title">URL</span>
+				<span><input type="text" class="wblm-table-add-field" value="" name="new_url" placeholder="http://"></span>
+			</label>
+		<button class="button-primary save alignright" type="submit" name="urlAddBulk" value="OK">%s</button>
+		</form></div>';
+	printf($bulkEdit, $page, $buttonText);
+}
+
+function wpslEmptyLOG(){
+	global $wpdb;
+	$wpdb->query("DELETE FROM " . TABLE_WBLM_LOG);
+}
+
+function wpslEmptyBrokenUrls($page, $buttonText){
+	global $wpdb;
+	$wpdb->query("DELETE FROM " . TABLE_WBLM . " WHERE active = 0");
+}
+
+
+
 
 if($settingsSaveFunc){ wpslSettingsSave(); }
 if($editURLFunc){ wpslEditURL(); }
 if($addURLFunc){ wpslAddURL(); }
 if($delURLFunc){ wpslDelURL(); }
+if($emptyLOGFunc){ wpslEmptyLOG(); }
+if($emptyBrokenUrlsFunc){ wpslEmptyBrokenUrls(); }
 
 ?>

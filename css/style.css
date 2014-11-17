@@ -376,3 +376,6 @@ min-width: 345px;
 .toplevel_page_wblm-dashboard .dashicons-admin-generic {
     content: "\f103";
 }
+#bulkEditBox{
+	position: absolute; left: 350px; top: 230px; z-index: 480; width:500px; box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.9);
+}
