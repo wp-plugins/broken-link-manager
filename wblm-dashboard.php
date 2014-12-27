@@ -157,11 +157,9 @@ $referUrls = $wpdb->get_var("SELECT COUNT(referer) FROM " . TABLE_WBLM_LOG );
                         </div>
                         <div class="panel-body">
                             <div id="morris-donut-chart"></div>
-                            
                         </div>
                         <!-- /.panel-body -->
                     </div>
-
                 </div>
                 <!-- /.col-lg-4 -->
             </div>
