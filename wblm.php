@@ -3,7 +3,7 @@
 Plugin Name: Broken Link Manager
 Plugin URI: https://wordpress.org/plugins/broken-link-manager
 Description: WBLM -> Wordpress Broken Link Manager. This plugin helps you check, organise and monitor your broken backlinks.
-Version: 0.3.3
+Version: 0.3.4
 Author: Hüseyin Kocak
 Author URI: http://k-78.de
 Text Domain: broken-link-manager
@@ -117,6 +117,9 @@ function menuLogFunc(){
 /*************************************************************************************
  *	DATABANKS
  *************************************************************************************/
+function create_wblm_table(){
+	echo 'TABLE_WBLM : ' . TABLE_WBLM;
+	
 	$sql_wblm = "CREATE TABLE IF NOT EXISTS " . TABLE_WBLM . " (
 	`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 	`old_url` VARCHAR( 250 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
@@ -141,17 +144,15 @@ function menuLogFunc(){
 	`http_statu` INT NOT NULL
 	) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci ";
 	$wpdb->query($sql_wblm_log);
-	
-	if (MYSQL_VER < 3){
-		$sql_wblm_add_http_statu = "ALTER TABLE `". TABLE_WBLM ."` ADD `http_statu` INT NULL AFTER `type`";
-		$sql_wblm_log_add_domain = "ALTER TABLE `". TABLE_WBLM_LOG ."` ADD `domain` VARCHAR(200) NOT NULL AFTER `date`";
-		$wpdb->query($sql_wblm_add_http_statu);
-		$wpdb->query($sql_wblm_log_add_domain);
-		update_option( wblm_mysql_ver, '3' );
-		define( 'MYSQL_VER', get_option('wblm_mysql_ver'));
-	}
-	
-	
+}
+if (MYSQL_VER < 3){
+	$sql_wblm_add_http_statu = "ALTER TABLE `". TABLE_WBLM ."` ADD `http_statu` INT NULL AFTER `type`";
+	$sql_wblm_log_add_domain = "ALTER TABLE `". TABLE_WBLM_LOG ."` ADD `domain` VARCHAR(200) NOT NULL AFTER `date`";
+	$wpdb->query($sql_wblm_add_http_statu);
+	$wpdb->query($sql_wblm_log_add_domain);
+	update_option( wblm_mysql_ver, '3' );
+	define( 'MYSQL_VER', get_option('wblm_mysql_ver'));
+}	
 /*************************************************************************************
  *	LOG PATH (SIMDILIK SADECE KLASOR OLUSTURULUYOR)
  *************************************************************************************/
@@ -227,6 +228,8 @@ if(get_option('wblm_default_url')){
 	add_option( 'wblm_default_url', get_home_url(), '', 'yes' );
 	define( 'DEFAULT_URL', get_option('wblm_default_url'));
 }
+register_activation_hook( __FILE__, 'create_wblm_table' );
+
 /*************************************************************************************
  *	FONCTIONS
  *************************************************************************************/
