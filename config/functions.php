@@ -94,7 +94,7 @@ function wpslLogStatu($redirect, $broken){
 }
 
 function get_wblmFooter(){
-	echo '<div class="navbar navbar-default" id="footer" role="footer">&copy; All rights reserved, <a target="_blank" href="http://k-78.de">K78 Let`s do more</a> and <a target="_blank" href="http://beqo.de">BEQO</a>   ver. <?php echo WBLM_VERSION; ?></div>';
+	echo '<div class="navbar navbar-default" id="footer" role="footer">&copy; All rights reserved, <a target="_blank" href="http://k-78.de">K78 Let`s do more</a> and <a target="_blank" href="http://beqo.de">BEQO</a>   ver. '. WBLM_VERSION .'</div>';
 }
 
 function get_wblmTopNavi(){
@@ -137,25 +137,26 @@ function get_bulkEdit($page, $buttonText){
 		</form></div>';
 	printf($bulkEdit, $page, $buttonText);
 }
-
-function wpslEmptyLOG(){
+function wpslEmptyLOG($statu){
 	global $wpdb;
-	$wpdb->query("DELETE FROM " . TABLE_WBLM_LOG);
+	if($statu == 404){
+		$wpdb->query("DELETE FROM " . TABLE_WBLM_LOG . ' WHERE http_statu = 404');
+	}elseif($statu == 301){
+		$wpdb->query("DELETE FROM " . TABLE_WBLM_LOG . ' WHERE http_statu = 301');
+	}else{
+		$wpdb->query("DELETE FROM " . TABLE_WBLM_LOG);
+	}	
 }
-
 function wpslEmptyBrokenUrls($page, $buttonText){
 	global $wpdb;
 	$wpdb->query("DELETE FROM " . TABLE_WBLM . " WHERE active = 0");
 }
 
-
-
-
 if($settingsSaveFunc){ wpslSettingsSave(); }
 if($editURLFunc){ wpslEditURL(); }
 if($addURLFunc){ wpslAddURL(); }
 if($delURLFunc){ wpslDelURL(); }
-if($emptyLOGFunc){ wpslEmptyLOG(); }
+if($emptyLOGFunc){ wpslEmptyLOG($emptyLOGStatu); }
 if($emptyBrokenUrlsFunc){ wpslEmptyBrokenUrls(); }
 
 ?>

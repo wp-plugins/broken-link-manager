@@ -150,11 +150,19 @@
 				<p class="bg-danger" style="padding:10px; margin-top:0; font-size:16px; font-weight: bold; "><?php _e('Empty', 'wblm') ?></p>
 				<div class="form-horizontal">
 					<div class="form-group">
-						<div class="col-sm-2">
-							<a onclick="return confirm('Are you sure you want to empty all log?');" href="<?php echo admin_url("admin.php?page=wblm-settings&emptyLOG=on"); ?>">
-								<button type="submit" class="btn btn-danger"> <?php _e('EMPTY ALL LOG', 'wblm') ?> </button>
-							</a>
+						<div class="col-sm-2">						
+							<div class="btn-group">
+							<button type="button" class="btn btn-danger"><?php _e('EMPTY LOG', 'wblm') ?></button>
+							<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown"><i class="fa fa-angle-down"></i></button>
+							<ul class="dropdown-menu" role="menu">
+								<li><a onclick="return confirm('Are you sure you want to empty all 404 log?');" href="<?php echo admin_url("admin.php?page=wblm-settings&emptyLOG=on&emptyLOGStatu=404"); ?>"><?php _e('EMPTY 404 LOG', 'wblm') ?></a></li>
+								<li><a onclick="return confirm('Are you sure you want to empty all 301 log?');" href="<?php echo admin_url("admin.php?page=wblm-settings&emptyLOG=on&emptyLOGStatu=301"); ?>"><?php _e('EMPTY 301 LOG', 'wblm') ?></a></li>
+								<li class="divider"></li>
+								<li><a onclick="return confirm('Are you sure you want to empty all log?');" href="<?php echo admin_url("admin.php?page=wblm-settings&emptyLOG=on"); ?>"><?php _e('EMPTY ALL LOG', 'wblm') ?></a></li>
+							</ul>
+							</div>
 						</div>
+						
 						<div class="col-sm-2">
 							<a onclick="return confirm('Are you sure you want to empty all broken URLs?');" href="<?php echo admin_url("admin.php?page=wblm-settings&emptyBrokenUrls=on"); ?>">
 								<button type="submit" class="btn btn-warning"> <?php _e('EMPTY ALL BROKEN URLs', 'wblm') ?> </button>

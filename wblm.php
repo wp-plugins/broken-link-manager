@@ -3,13 +3,13 @@
 Plugin Name: Broken Link Manager
 Plugin URI: https://wordpress.org/plugins/broken-link-manager
 Description: WBLM -> Wordpress Broken Link Manager. This plugin helps you check, organise and monitor your broken backlinks.
-Version: 0.3.5
+Version: 0.4.0
 Author: Hüseyin Kocak
 Author URI: http://k-78.de
 Text Domain: broken-link-manager
 
 WordPress Broken Link Manager Plugin
-Copyright (C) 2014, K78 and BEQO - info@k-78.de
+Copyright (C) 2014, K78 - info@k-78.de
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -68,6 +68,7 @@ $editURLFunc  = isset($_GET['editURL']) ? $_GET['editURL'] : null;
 $addURLFunc  = isset($_GET['addURL']) ? $_GET['addURL'] : null;
 $delURLFunc  = isset($_GET['delURL']) ? $_GET['delURL'] : null;
 $emptyLOGFunc  = isset($_GET['emptyLOG']) ? $_GET['emptyLOG'] : null;
+$emptyLOGStatu  = isset($_GET['emptyLOGStatu']) ? $_GET['emptyLOGStatu'] : null;
 $emptyBrokenUrlsFunc  = isset($_GET['emptyBrokenUrls']) ? $_GET['emptyBrokenUrls'] : null;
 
 include WBLM_CONFIG_PATH . 'functions.php';
@@ -229,7 +230,6 @@ if(get_option('wblm_default_url')){
 	define( 'DEFAULT_URL', get_option('wblm_default_url'));
 }
 register_activation_hook( __FILE__, 'create_wblm_table' );
-
 /*************************************************************************************
  *	FONCTIONS
  *************************************************************************************/
