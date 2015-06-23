@@ -2,8 +2,8 @@
 Contributors: flashcentury 
 Tags: Broken, Link, URL,  301, 404, Backlink, checker, SEO, Google, 404 page, Borken url, wordpress 404, Redirect,seo
 Requires at least: 3.0
-Tested up to: 4.2
-Stable tag: 0.4.0
+Tested up to: 4.2.2
+Stable tag: 0.4.5
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8NYR3F4RVTBHS
 
 This plugin helps you check, organize and monitor your broken backlink.
@@ -29,7 +29,9 @@ For example: yourdomain.com/tag/wordpress -> yourdomain.com/wp
 > <strong>Language</strong><br>
 > [- English (Hülya Kocak)](http://brokenlinkmanager.com)<br>
 > [- Deutsch (Berkant Kacar)](http://beqo.de) <br>
-> [- Türkçe (Hüseyin Kocak](http://k-78.de) <br>
+> [- Türkçe (Hüseyin Kocak)](http://k-78.de) <br><br>
+
+> [- Download .pot file for your language](brokenlinkmanager.com/wblm.pot.zip) <br>
 
 == Installation ==
 
@@ -45,13 +47,16 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 
 == Changelog ==
 
-= 0.3.5 =
+= 0.4.5 =
+* Compatibility with WP 4.2.2
+* Fixed empty Log feature same Small bug
+
+= 0.4.0 =
 * Compatibility with WP 4.2
 * Small bug fixes.
 * Added optional empty Log feature
 
-
-= 0.3.4 =
+= 0.3.5 =
 * Optimized plugin install (Database table query)
 * Added German Language
 * Added Turkish Language

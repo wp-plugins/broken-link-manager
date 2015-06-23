@@ -162,7 +162,6 @@
 							</ul>
 							</div>
 						</div>
-						
 						<div class="col-sm-2">
 							<a onclick="return confirm('Are you sure you want to empty all broken URLs?');" href="<?php echo admin_url("admin.php?page=wblm-settings&emptyBrokenUrls=on"); ?>">
 								<button type="submit" class="btn btn-warning"> <?php _e('EMPTY ALL BROKEN URLs', 'wblm') ?> </button>
@@ -174,7 +173,28 @@
 		</div><!-- /.panel -->
 	</div><!-- /.col-lg-12 -->
 </div> <!-- //Empty -->
-<br /><br />               
+<br /><br />    
+<!-- Export -->
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">     
+			<!-- /.panel-heading -->
+			<div class="panel-body">                      
+				<p class="bg-info" style="padding:10px; margin-top:0; font-size:16px; font-weight: bold; "><?php _e('Export', 'wblm') ?></p>
+				<div class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-2">
+							<a href="<?php echo admin_url("admin.php?page=wblm-settings&exportUrls=on"); ?>">
+								<button disabled="" type="submit" class="btn btn-info"> <?php _e('EXPORT ALL URLs', 'wblm') ?> </button>
+							</a>
+						</div>
+					</div>
+				</div><!-- form-horizontal -->
+			</div><!-- /.panel-body -->
+		</div><!-- /.panel -->
+	</div><!-- /.col-lg-12 -->
+</div> <!-- //Export -->
+<br /><br />       
 </div><!-- /#page-wrapper -->
 <?php get_wblmFooter(); ?>
 </div>
