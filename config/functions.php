@@ -10,7 +10,6 @@ $from_email = $_POST['from_email'];
 $to_email = $_POST['to_email'];
 $cc_email = $_POST['cc_email'];
 $bcc_email = $_POST['bcc_email'];
-
 $default_url= $_POST['default_url'];
 
 update_option( wblm_send_email, $send_email );
@@ -38,48 +37,53 @@ $old_url  = isset($_POST['old_url']) ? $_POST['old_url'] : null;
 $new_url  = isset($_POST['new_url']) ? $_POST['new_url'] : null;
 $url  = isset($_POST['url']) ? $_POST['url'] : null;
 $type  = isset($_POST['type']) ? $_POST['type'] : null;
+
+$url = (int) intval($url);
+if(is_numeric($url)){
 global $wpdb;
-if($type == 'old'){
-	$wpdb->query("UPDATE " . TABLE_WBLM . " SET `new_url` = '$new_url', `active` = '1' WHERE id = '$url'");
-	$page = $_POST['rpage'];
-}else{
-	$wpdb->query("UPDATE " . TABLE_WBLM . " SET old_url = '$old_url', new_url = '$new_url' WHERE id = $url");
-	$page = 'page=wblm-redirect';
+	if($type == 'old'){
+		$wpdb->query($wpdb->prepare("UPDATE " . TABLE_WBLM . " SET `new_url` = '%s', `active` = '1' WHERE id = '%d'", $new_url, $url));
+		$page = $_POST['rpage'];
+	}else{
+		$wpdb->query($wpdb->prepare("UPDATE " . TABLE_WBLM . " SET old_url = '%s', `new_url` = '%s', `active` = '1' WHERE id = '%d'", $old_url,$new_url, $url));
+		$page = 'page=wblm-redirect';
+	}
 }
-
 _e('Updated ', 'wblm');
-
-//echo '<script type="text/javascript">
-//window.location="'. admin_url("admin.php?$page"). '";
-//</script>';
 }
 
 function wpslAddURL(){
-$old_url  = isset($_POST['old_url']) ? $_POST['old_url'] : null;
-$new_url  = isset($_POST['new_url']) ? $_POST['new_url'] : null;
+	$old_url  = isset($_POST['old_url']) ? $_POST['old_url'] : null;
+	$new_url  = isset($_POST['new_url']) ? $_POST['new_url'] : null;	
 
-global $wpdb;
-$wpdb->query("INSERT INTO " . TABLE_WBLM . " (`old_url`, `new_url`, `hit`, `active`) VALUES ('$old_url', '$new_url', '0', '1')");
-$page = 'wblm-redirect';
-
-_e('added ', 'wblm');
-
-echo '<script type="text/javascript">
-window.location="'. admin_url("admin.php?page=$page") . '";
-</script>';
+	global $wpdb;
+	$wpdb->query($wpdb->prepare("INSERT INTO " . TABLE_WBLM . " (`old_url`, `new_url`, `hit`, `active`)  VALUES ('%s', '%s', '0', '1')", $old_url,$new_url));	
+	$page = 'wblm-redirect';
+	
+	_e('added ', 'wblm');
+	
+	echo '<script type="text/javascript">
+	window.location="'. admin_url("admin.php?page=wblm-redirect") . '";
+	</script>';
 }
-
+	
 function wpslDelURL(){
-$url  = isset($_GET['url']) ? $_GET['url'] : null;
-$page  = isset($_GET['page']) ? $_GET['page'] : null;
-
-global $wpdb;
-$wpdb->query("DELETE FROM " . TABLE_WBLM . " WHERE id = $url");
-$wpdb->query("DELETE FROM " . TABLE_WBLM_LOG . " WHERE url = $url");
-
-echo '<script type="text/javascript">
-window.location="'. admin_url("admin.php?page=$page") . '";
-</script>';
+	$url  = isset($_GET['url']) ? $_GET['url'] : null;
+	$page  = isset($_GET['page']) ? $_GET['page'] : null;
+	
+	$url= (int) intval($url);
+	
+	if(is_numeric($url)){
+	global $wpdb;
+	$wpdb->query($wpdb->prepare("DELETE FROM " . TABLE_WBLM . " WHERE id = %d", $url));
+	$wpdb->query($wpdb->prepare("DELETE FROM " . TABLE_WBLM_LOG . " WHERE id = %d", $url));
+	}
+	
+	if($page=='wblm-broken' || $page=='wblm-redirect'){
+		echo '<script type="text/javascript">
+	window.location="'. admin_url("admin.php?page=$page") . '";
+	</script>';
+	}
 }
 
 function wpslLogStatu($redirect, $broken){
@@ -120,7 +124,6 @@ function get_wblmTopNavi(){
 	</ul>';
 	printf($topNavi, admin_url("admin.php?page=wblm-dashboard"), admin_url("admin.php?page=wblm-redirect"), admin_url("admin.php?page=wblm-broken"), admin_url("admin.php?page=wblm-add-url"), admin_url("admin.php?page=wblm-log"), admin_url("admin.php?page=wblm-settings"));
 }
-
 function get_bulkEdit($page, $buttonText){
 	$bulkEdit =  '
 	<div class="alert alert-info alert-dismissable" id="bulkEditBox">
@@ -147,16 +150,14 @@ function wpslEmptyLOG($statu){
 		$wpdb->query("DELETE FROM " . TABLE_WBLM_LOG);
 	}	
 }
-function wpslEmptyBrokenUrls($page, $buttonText){
+function wpslEmptyBrokenUrls(){
 	global $wpdb;
 	$wpdb->query("DELETE FROM " . TABLE_WBLM . " WHERE active = 0");
 }
-
 if($settingsSaveFunc){ wpslSettingsSave(); }
 if($editURLFunc){ wpslEditURL(); }
 if($addURLFunc){ wpslAddURL(); }
 if($delURLFunc){ wpslDelURL(); }
 if($emptyLOGFunc){ wpslEmptyLOG($emptyLOGStatu); }
 if($emptyBrokenUrlsFunc){ wpslEmptyBrokenUrls(); }
-
 ?>
