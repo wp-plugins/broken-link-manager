@@ -3,7 +3,7 @@
 Plugin Name: Broken Link Manager
 Plugin URI: https://wordpress.org/plugins/broken-link-manager
 Description: WBLM -> Wordpress Broken Link Manager. This plugin helps you check, organise and monitor your broken backlinks.
-Version: 0.5.0
+Version: 0.5.5
 Author: Hüseyin Kocak
 Author URI: http://k-78.de
 Text Domain: broken-link-manager
@@ -63,13 +63,13 @@ if(get_option('wblm_mysql_ver')){
 	define( 'MYSQL_VER', get_option('wblm_mysql_ver'));
 }
 
-$settingsSaveFunc  = isset($_GET['settingsSave']) ? $_GET['settingsSave'] : null;
-$editURLFunc  = isset($_GET['editURL']) ? $_GET['editURL'] : null;
-$addURLFunc  = isset($_GET['addURL']) ? $_GET['addURL'] : null;
-$delURLFunc  = isset($_GET['delURL']) ? $_GET['delURL'] : null;
-$emptyLOGFunc  = isset($_GET['emptyLOG']) ? $_GET['emptyLOG'] : null;
-$emptyLOGStatu  = isset($_GET['emptyLOGStatu']) ? $_GET['emptyLOGStatu'] : null;
-$emptyBrokenUrlsFunc  = isset($_GET['emptyBrokenUrls']) ? $_GET['emptyBrokenUrls'] : null;
+$settingsSaveFunc  = isset($_GET['settingsSave']) ? 'on' : null;
+$editURLFunc  = isset($_GET['editURL']) ? 'on' : null;
+$addURLFunc  = isset($_GET['addURL']) ? 'on' : null;
+$delURLFunc  = isset($_GET['delURL']) ? 'on' : null;
+$emptyLOGFunc  = isset($_GET['emptyLOG']) ? 'on' : null;
+$emptyLOGStatu  = isset($_GET['emptyLOGStatu']) ? 'on' : null;
+$emptyBrokenUrlsFunc  = isset($_GET['emptyBrokenUrls']) ? 'on' : null;
 
 include WBLM_CONFIG_PATH . 'functions.php';
 

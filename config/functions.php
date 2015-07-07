@@ -1,16 +1,16 @@
 <?php
 function wpslSettingsSave(){
-$send_email = $_POST['send_email'];
-$save_broken_urls = $_POST['save_broken_urls'];
-$save_url_stats = $_POST['save_url_stats'];
-$save_url_log = $_POST['save_url_log'];
-$redirect_default_url = $_POST['redirect_default_url'];
+$send_email = isset($_POST['send_email']) ? 'on' : null;
+$save_broken_urls = isset($_POST['save_broken_urls']) ? 'on' : null;
+$save_url_stats = isset($_POST['save_url_stats']) ? 'on' : null;
+$save_url_log = isset($_POST['save_url_log']) ? 'on' : null;
+$redirect_default_url = isset($_POST['redirect_default_url']) ? 'on' : null;
 
-$from_email = $_POST['from_email'];
-$to_email = $_POST['to_email'];
-$cc_email = $_POST['cc_email'];
-$bcc_email = $_POST['bcc_email'];
-$default_url= $_POST['default_url'];
+$from_email = sanitize_email($_POST['from_email']);
+$to_email = sanitize_email($_POST['to_email']);
+$cc_email = sanitize_email($_POST['cc_email']);
+$bcc_email = sanitize_email($_POST['bcc_email']);
+$default_url= sanitize_url($_POST['default_url']);
 
 update_option( wblm_send_email, $send_email );
 update_option( wblm_save_broken_urls, $save_broken_urls );
@@ -33,28 +33,25 @@ window.location="'. admin_url("admin.php?page=wblm-settings"). '";
 }
 
 function wpslEditURL(){
-$old_url  = isset($_POST['old_url']) ? $_POST['old_url'] : null;
-$new_url  = isset($_POST['new_url']) ? $_POST['new_url'] : null;
-$url  = isset($_POST['url']) ? $_POST['url'] : null;
-$type  = isset($_POST['type']) ? $_POST['type'] : null;
+$old_url  = isset($_POST['old_url']) ? sanitize_url($_POST['old_url']) : null;
+$new_url  = isset($_POST['new_url']) ? sanitize_url($_POST['new_url']) : null;
+$url  = isset($_POST['url']) ? (int) intval($_POST['url']) : null;
+$type  = isset($_POST['type']) ? sanitize_text_field($_POST['type']) : null;
 
-$url = (int) intval($url);
-if(is_numeric($url)){
-global $wpdb;
-	if($type == 'old'){
-		$wpdb->query($wpdb->prepare("UPDATE " . TABLE_WBLM . " SET `new_url` = '%s', `active` = '1' WHERE id = '%d'", $new_url, $url));
-		$page = $_POST['rpage'];
-	}else{
-		$wpdb->query($wpdb->prepare("UPDATE " . TABLE_WBLM . " SET old_url = '%s', `new_url` = '%s', `active` = '1' WHERE id = '%d'", $old_url,$new_url, $url));
-		$page = 'page=wblm-redirect';
+if(is_numeric($url) && $url!=null){
+	global $wpdb;
+		if($type == 'old'){
+			$wpdb->query($wpdb->prepare("UPDATE " . TABLE_WBLM . " SET `new_url` = '%s', `active` = '1' WHERE id = '%d'", $new_url, $url));
+		}else{
+			$wpdb->query($wpdb->prepare("UPDATE " . TABLE_WBLM . " SET old_url = '%s', `new_url` = '%s', `active` = '1' WHERE id = '%d'", $old_url,$new_url, $url));
+		}
 	}
-}
-_e('Updated ', 'wblm');
+	_e('Updated ', 'wblm');
 }
 
 function wpslAddURL(){
-	$old_url  = isset($_POST['old_url']) ? $_POST['old_url'] : null;
-	$new_url  = isset($_POST['new_url']) ? $_POST['new_url'] : null;	
+	$old_url  = isset($_POST['old_url']) ? sanitize_url($_POST['old_url']) : null;
+	$new_url  = isset($_POST['new_url']) ? sanitize_url($_POST['new_url']) : null;	
 
 	global $wpdb;
 	$wpdb->query($wpdb->prepare("INSERT INTO " . TABLE_WBLM . " (`old_url`, `new_url`, `hit`, `active`)  VALUES ('%s', '%s', '0', '1')", $old_url,$new_url));	
@@ -68,12 +65,10 @@ function wpslAddURL(){
 }
 	
 function wpslDelURL(){
-	$url  = isset($_GET['url']) ? $_GET['url'] : null;
-	$page  = isset($_GET['page']) ? $_GET['page'] : null;
+	$url  = isset($_GET['url']) ? (int) intval($_GET['url']) : null;
+	$page  = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : null;
 	
-	$url= (int) intval($url);
-	
-	if(is_numeric($url)){
+	if(is_numeric($url) && $url!=null){
 	global $wpdb;
 	$wpdb->query($wpdb->prepare("DELETE FROM " . TABLE_WBLM . " WHERE id = %d", $url));
 	$wpdb->query($wpdb->prepare("DELETE FROM " . TABLE_WBLM_LOG . " WHERE id = %d", $url));
@@ -130,7 +125,7 @@ function get_bulkEdit($page, $buttonText){
 		<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
 		<form action="admin.php?page=%s" method="post">';     
 		foreach($_POST['url'] as $url) {
-			$bulkEdit .= '<input type="hidden" name="urls[]" value="'.$url.'" />';
+			$bulkEdit .= '<input type="hidden" name="urls[]" value="'.sanitize_url($url).'" />';
 		}
 		$bulkEdit .= '<label>
 				<span class="title">URL</span>
