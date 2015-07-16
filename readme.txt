@@ -3,7 +3,7 @@ Contributors: flashcentury
 Tags: Broken, Link, URL,  301, 404, Backlink, checker, SEO, Google, 404 page, Borken url, wordpress 404, Redirect,seo
 Requires at least: 3.0
 Tested up to: 4.2.2
-Stable tag: 0.5.5
+Stable tag: 0.6.0
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8NYR3F4RVTBHS
 
 This plugin helps you check, organize and monitor your broken backlink.
@@ -48,10 +48,12 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 
 == Changelog ==
 
+= 0.6.0 =
+* Take measure against XSS attack
+
 = 0.5.5 =
 * Some security measures were taken
 * Fixed small bug 
-
 
 = 0.5.0 =
 * Take measure against SQL injection attack
