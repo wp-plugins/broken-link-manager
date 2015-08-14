@@ -3,7 +3,7 @@
 Plugin Name: Broken Link Manager
 Plugin URI: https://wordpress.org/plugins/broken-link-manager
 Description: WBLM -> Wordpress Broken Link Manager. This plugin helps you check, organise and monitor your broken backlinks.
-Version: 0.6.0
+Version: 0.6.5
 Author: Hüseyin Kocak
 Author URI: http://k-78.de
 Text Domain: broken-link-manager
